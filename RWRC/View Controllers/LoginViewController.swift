@@ -78,13 +78,13 @@ class LoginViewController: UIViewController {
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(keyboardWillShow(_:)),
-      name: UIResponder.keyboardWillShowNotification,
+      name: NSNotification.Name.UIKeyboardWillShow,
       object: nil
     )
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(keyboardWillHide(_:)),
-      name: UIResponder.keyboardWillHideNotification,
+      name: NSNotification.Name.UIKeyboardWillHide,
       object: nil
     )
   }
@@ -116,17 +116,17 @@ class LoginViewController: UIViewController {
     guard let userInfo = notification.userInfo else {
       return
     }
-    guard let keyboardHeight = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else {
+    guard let keyboardHeight = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else {
       return
     }
-    guard let keyboardAnimationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
+    guard let keyboardAnimationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
       return
     }
-    guard let keyboardAnimationCurve = (userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber)?.uintValue else {
+    guard let keyboardAnimationCurve = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber)?.uintValue else {
       return
     }
     
-    let options = UIView.AnimationOptions(rawValue: keyboardAnimationCurve << 16)
+    let options = UIViewAnimationOptions(rawValue: keyboardAnimationCurve << 16)
     bottomConstraint.constant = keyboardHeight + 20
     
     UIView.animate(withDuration: keyboardAnimationDuration, delay: 0, options: options, animations: {
@@ -138,14 +138,14 @@ class LoginViewController: UIViewController {
     guard let userInfo = notification.userInfo else {
       return
     }
-    guard let keyboardAnimationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
+    guard let keyboardAnimationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
       return
     }
-    guard let keyboardAnimationCurve = (userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber)?.uintValue else {
+    guard let keyboardAnimationCurve = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber)?.uintValue else {
       return
     }
     
-    let options = UIView.AnimationOptions(rawValue: keyboardAnimationCurve << 16)
+    let options = UIViewAnimationOptions(rawValue: keyboardAnimationCurve << 16)
     bottomConstraint.constant = 20
     
     UIView.animate(withDuration: keyboardAnimationDuration, delay: 0, options: options, animations: {
