@@ -27,6 +27,7 @@
 /// THE SOFTWARE.
 
 import UIKit
+import FirebaseAuth
 
 class LoginViewController: UIViewController {
   
@@ -98,6 +99,8 @@ class LoginViewController: UIViewController {
     displayNameField.resignFirstResponder()
     
     AppSettings.displayName = name
+    
+    Auth.auth().signInAnonymously(completion: nil)
   }
   
   private func showMissingNameAlert() {

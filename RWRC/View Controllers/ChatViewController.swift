@@ -36,6 +36,9 @@ final class ChatViewController: MessagesViewController {
   private let user: User
   private let channel: Channel
   
+  private var messages: [Message] = []
+  private var messageListener: ListenerRegistration?
+  
   init(user: User, channel: Channel) {
     self.user = user
     self.channel = channel
@@ -64,6 +67,38 @@ final class ChatViewController: MessagesViewController {
 
 extension ChatViewController: MessagesDisplayDelegate {
   
+}
+
+// MARK: - MessagesDataSource
+
+extension ChatViewController: MessagesDataSource {
+  
+  // 1
+  func currentSender() -> Sender {
+    return Sender(id: user.uid, displayName: AppSettings.displayName)
+  }
+  
+  // 2
+  func numberOfMessages(in messagesCollectionView: MessagesCollectionView) -> Int {
+    return messages.count
+  }
+  
+  // 3
+  func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+    return messages[indexPath.section]
+  }
+  
+  // 4
+  func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+    let name = message.sender.displayName
+    return NSAttributedString(
+      string: name,
+      attributes: [
+        .font: UIFont.preferredFont(forTextStyle: .caption1),
+        .foregroundColor: UIColor(white: 0.3, alpha: 1)
+      ]
+    )
+  }
 }
 
 // MARK: - MessageInputBarDelegate
