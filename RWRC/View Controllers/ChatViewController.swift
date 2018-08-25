@@ -50,6 +50,10 @@ final class ChatViewController: MessagesViewController {
     title = channel.name
   }
   
+  deinit {
+    messageListener?.remove()
+  }
+  
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
@@ -74,6 +78,17 @@ final class ChatViewController: MessagesViewController {
     messagesCollectionView.messagesDataSource = self
     messagesCollectionView.messagesLayoutDelegate = self
     messagesCollectionView.messagesDisplayDelegate = self
+    
+    messageListener = reference?.addSnapshotListener { querySnapshot, error in
+      guard let snapshot = querySnapshot else {
+        print("Error listening for channel updates: \(error?.localizedDescription ?? "No error")")
+        return
+      }
+      
+      snapshot.documentChanges.forEach { change in
+        self.handleDocumentChange(change)
+      }
+    }
   }
   
 //  override func viewDidAppear(_ animated: Bool) {
@@ -115,6 +130,19 @@ final class ChatViewController: MessagesViewController {
     }
   }
   
+  private func handleDocumentChange(_ change: DocumentChange) {
+    guard let message = Message(document: change.document) else {
+      return
+    }
+    
+    switch change.type {
+    case .added:
+      insertNewMessage(message)
+      
+    default:
+      break
+    }
+  }
 }
 
 // MARK: - MessagesLayoutDelegate
