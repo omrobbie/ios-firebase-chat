@@ -63,10 +63,52 @@ final class ChatViewController: MessagesViewController {
   
 }
 
+// MARK: - MessagesLayoutDelegate
+
+extension ChatViewController: MessagesLayoutDelegate {
+  
+  func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+    
+    // 1
+    return .zero
+  }
+  
+  func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+    
+    // 2
+    return CGSize(width: 0, height: 8)
+  }
+  
+  func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+    
+    // 3
+    return 0
+  }
+}
+
 // MARK: - MessagesDisplayDelegate
 
 extension ChatViewController: MessagesDisplayDelegate {
   
+  func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+    
+    // 1
+    return isFromCurrentSender(message: message) ? .primary : .incomingMessage
+  }
+  
+  func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Bool {
+    
+    // 2
+    return false
+  }
+  
+  func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
+    
+    let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
+    
+    // 3
+    return .bubbleTail(corner, .curved)
+  }
 }
 
 // MARK: - MessagesDataSource
