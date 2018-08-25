@@ -66,6 +66,35 @@ final class ChatViewController: MessagesViewController {
     messagesCollectionView.messagesDisplayDelegate = self
   }
   
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    let testMessage = Message(user: user, content: "I love pizza, what is your favorite kind?")
+    insertNewMessage(testMessage)
+  }
+  
+  // MARK: - Helpers
+  
+  private func insertNewMessage(_ message: Message) {
+    guard !messages.contains(message) else {
+      return
+    }
+    
+    messages.append(message)
+    messages.sort()
+    
+    let isLatestMessage = messages.index(of: message) == (messages.count - 1)
+    let shouldScrollToBottom = messagesCollectionView.isAtBottom && isLatestMessage
+    
+    messagesCollectionView.reloadData()
+    
+    if shouldScrollToBottom {
+      DispatchQueue.main.async {
+        self.messagesCollectionView.scrollToBottom(animated: true)
+      }
+    }
+  }
+  
 }
 
 // MARK: - MessagesLayoutDelegate
