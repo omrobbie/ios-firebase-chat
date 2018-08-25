@@ -30,6 +30,7 @@ import UIKit
 import Firebase
 import MessageKit
 import FirebaseFirestore
+import Photos
 
 final class ChatViewController: MessagesViewController {
   
@@ -78,7 +79,8 @@ final class ChatViewController: MessagesViewController {
     messagesCollectionView.messagesDataSource = self
     messagesCollectionView.messagesLayoutDelegate = self
     messagesCollectionView.messagesDisplayDelegate = self
-    
+
+    // listen to changed firebase data
     messageListener = reference?.addSnapshotListener { querySnapshot, error in
       guard let snapshot = querySnapshot else {
         print("Error listening for channel updates: \(error?.localizedDescription ?? "No error")")
@@ -89,6 +91,22 @@ final class ChatViewController: MessagesViewController {
         self.handleDocumentChange(change)
       }
     }
+    
+    // add camera button on input bar
+    let cameraItem = InputBarButtonItem(type: .system)
+    cameraItem.tintColor = .primary
+    cameraItem.image = #imageLiteral(resourceName: "camera")
+    
+    cameraItem.addTarget(
+      self,
+      action: #selector(cameraButtonPressed),
+      for: .primaryActionTriggered
+    )
+    cameraItem.setSize(CGSize(width: 60, height: 30), animated: false)
+    
+    messageInputBar.leftStackView.alignment = .center
+    messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
+    messageInputBar.setStackViewItems([cameraItem], forStack: .left, animated: false)
   }
   
 //  override func viewDidAppear(_ animated: Bool) {
@@ -97,6 +115,20 @@ final class ChatViewController: MessagesViewController {
 //    let testMessage = Message(user: user, content: "I love pizza, what is your favorite kind?")
 //    insertNewMessage(testMessage)
 //  }
+  
+  // MARK: - Actions
+  @objc private func cameraButtonPressed() {
+    let picker = UIImagePickerController()
+    picker.delegate = self
+    
+    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+      picker.sourceType = .camera
+    } else {
+      picker.sourceType = .photoLibrary
+    }
+    
+    present(picker, animated: true, completion: nil)
+  }
   
   // MARK: - Helpers
   private func save(_ message: Message) {
